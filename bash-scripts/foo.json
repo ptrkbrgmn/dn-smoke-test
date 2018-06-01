@@ -1,0 +1,23 @@
+{
+  "req": {
+    "method": "POST",
+    "url": "http://flow-epi-30.lab.internal.bonnier.news/admin/index",
+    "data": "rawId=epi.421368",
+    "headers": {
+      "user-agent": "node-superagent/3.8.3",
+      "connection": "keep-alive",
+      "cache-control": "max-age=0",
+      "upgrade-insecure-request": "1",
+      "accept-encoding": "gzip, deflate",
+      "content-type": "application/x-www-form-urlencoded"
+    }
+  },
+  "header": {
+    "connection": "close",
+    "date": "Thu, 31 May 2018 13:43:16 GMT",
+    "location": "/admin/status",
+    "server": "Jetty(9.4.10.v20180503)"
+  },
+  "status": 303,
+  "text": ""
+}

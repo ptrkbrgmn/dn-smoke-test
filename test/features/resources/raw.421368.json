@@ -1,0 +1,69 @@
+{
+  "_index": "flow-raw2",
+  "_type": "raw",
+  "_id": "epi.421368",
+  "_version": 18,
+  "found": true,
+  "_source": {
+    "id": "epi.421368",
+    "_meta": {
+      "_objectType": "Recipe",
+      "_originalId": "421368",
+      "_sourceSystem": "epi",
+      "_triggeredBy": "admin",
+      "_indexed": "2018-05-31T15:48:19.822+02:00",
+      "_nextAction": null
+    },
+    "contentObject": {
+      "PageLink": "421368_425209",
+      "PageTypeID": 74,
+      "PageParentLink": "421309",
+      "PageWorkStatus": 4,
+      "PageFolderID": 421489,
+      "PageSaved": "2006-03-08T12:52:00",
+      "PageTypeName": "Recipe",
+      "PageChanged": "2006-03-08T12:52:00",
+      "PageCreatedBy": "sysadmin",
+      "PageChangedBy": "sysadmin",
+      "PageMasterLanguageBranch": "sv",
+      "PageLanguageBranch": "sv",
+      "PageGUID": "C35E1509-C098-49BF-8799-653BEF37993B",
+      "PageName": "Stureplan",
+      "PageVisibleInMenu": true,
+      "PageURLSegment": "stureplan",
+      "PageChildOrderRule": 1,
+      "PagePeerOrder": 0,
+      "PageStartPublish": "2006-03-08T12:52:00",
+      "PageCreated": "2006-03-08T12:52:00",
+      "PageShortcutType": 0,
+      "PageLinkURL": "/Pages/Article.aspx?id=421368",
+      "RichHeadline": "Stureplan",
+      "TypeOfDish": "Övrigt",
+      "MainIngredients": "Övrigt",
+      "SpecialFeasts": "Ingen",
+      "CookingTimes": "Max 30 minuter",
+      "RealCookingTime": 5,
+      "Ingredients": "<p>300 g färskost, t ex philadelphia<br />knappt 1/2 dl kalles kaviar<br />salt</p>",
+      "MainBodyCore": "\r\n\t<p>Receptet räcker till ett par dipprundor för tre–fyra personer.</p><p>Rör ihop ingredienserna.</p><p>Godast att doppa i röran är tunna, hårda knäckebrödsbitar.</p>\r\n",
+      "AuthorsCore": [
+        "340"
+      ],
+      "IsAuthorEmailVisible": true,
+      "CommentingStatus": "Off",
+      "CommentingDaysLimit": 7,
+      "ShowPublishDateOnPage": true,
+      "ArticleTeaserMainColumnLayout": "~/Pages/ArticleLayoutControls/NoImage.ascx",
+      "FormerFriendlyUrls": [
+        "stureplan-1"
+      ],
+      "FormerQueryParams": [],
+      "PublishedDateCore": "2006-03-08T12:52:00",
+      "FirstPublishCore": "2006-03-08T12:52:00",
+      "FriendlyUrl": "http://cms-test.dn.se/Pages/Article.aspx?id=421368&epslanguage=sv",
+      "Brand": "dn",
+      "PremiumState": "premium",
+      "Products": "DN.seXX"
+    },
+    "unpublishedObject": null
+  }
+}
