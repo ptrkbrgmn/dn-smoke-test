@@ -1,50 +1,25 @@
 "use strict";
 
+const parse = require("date-fns/parse");
+const isSameSecond = require("date-fns/is_same_second");
+const isAfter = require("date-fns/is_after");
+
 const request = require("supertest");
 const jsonFile = require("jsonfile");
-const assert = require('assert').strict;
-const moment = require('moment-timezone');
+const assert = require("assert").strict;
+
 const argv = require("../check-command-line-args")
 const conf = require("../test-configuration");
-const requestRetry = require('../request-retry');
-const debug = require('debug')('dn-smoke-test');
+const requestUntilTrue = require("../request-retry").requestUntilTrue;
+const debug = require("debug")("dn-smoke-test");
 
-const name = 'dn-smoke-test';
-const smokeTestStartTime = moment().tz("Europe/Stockholm");
+const name = "dn-smoke-test";
+const smokeTestStartTime = parse(new Date());
 const environment = conf.environments[argv.environment];
 const article = conf.article;
 const getElasticSearchUrl = conf.getElasticSearchUrl;
 
-debug("Starting smoke tests in '%s' environment at %s", argv.environment, smokeTestStartTime.format());
-
-// console.log("Episerver:");
-// console.log(environment.epiServer.url);
-// console.log(environment.epiServer.path);
-// console.log(article.epiServerId);
-// console.log("");
-// console.log("flow-epi-30");
-// console.log(environment.flowEpi30.url);
-// console.log(environment.flowEpi30.path);
-// console.log("rawId=".concat(article.flowEpi30Id));
-// console.log("");
-// console.log("ElasticSearch raw:")
-// console.log(environment.elasticSearch.url)
-// console.log(environment.elasticSearch.indeces.raw.path)
-// console.log(article.elasticSearchRawId)
-// console.log("");
-// console.log("ElasticSearch content:")
-// console.log(environment.elasticSearch.url)
-// console.log(environment.elasticSearch.indeces.content.path)
-// console.log(article.elasticSearchContentId)
-// console.log("");
-// console.log(getElasticSearchUrl(argv.environment, "raw"));
-// console.log("");
-// console.log(getElasticSearchUrl(argv.environment, "content"));
-// console.log("");
-// console.log("Alma:")
-// console.log(environment.alma.url)
-// console.log(environment.alma.path)
-// console.log(article.identifier)
+console.info("Starting smoke tests in '%s' environment at %s", argv.environment, smokeTestStartTime);
 
 Feature("Index article published on Episerver", () => {
 
@@ -73,6 +48,7 @@ Feature("Index article published on Episerver", () => {
     
     //return;
 
+    //TODO: Implement retry?
     When("starting a single index recompound job on flow-epi-30 for article with id '"+article.flowEpi30Id+"'", (done) => {
       request(environment.flowEpi30.url)
         .post(environment.flowEpi30.path)
@@ -87,29 +63,22 @@ Feature("Index article published on Episerver", () => {
         });
     });
 
-    // return;
+    //return;
 
     Then("fetching article with id '"+article.elasticSearchRawId+"' from ElasticSearch flow-raw index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "raw").concat(article.elasticSearchRawId);
-
-      //debug("ElasticSearch raw full url %s", urlPathAndId);
-
-      requestRetry.requestUntilTrue(urlPathAndId, 
-        function(aMessage, conditionFulfilled) {
-
-          debug("%s", aMessage);
-          
+      requestUntilTrue(urlPathAndId, 
+        function(conditionFulfilled) {
           if (conditionFulfilled) done();
           else done(new Error("Failed to retrieve article with correct indexed time from ElasticSearch raw at: "
             .concat(urlPathAndId)));
         }, 
         function(res) {
           const epiRawJson = res.body;
-          const indexedTime = moment.tz(epiRawJson._source._meta._indexed, "Europe/Stockholm");
+          const indexedTime = parse(epiRawJson._source._meta._indexed);
+          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime)
+          return epiRawJson._id == article.elasticSearchRawId && (isAfter(indexedTime, smokeTestStartTime) || isSameSecond(smokeTestStartTime, indexedTime));
           
-          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime.format())
-          
-          return epiRawJson._id == article.elasticSearchRawId && smokeTestStartTime.isBefore(indexedTime);
         }
       );
     });
@@ -117,60 +86,64 @@ Feature("Index article published on Episerver", () => {
     //return;
 
     Then("when fetching article with id '"+article.elasticSearchContentId+"' from ElasticSearch content-published index, indexed time in respone should be greater than start smoke test time", (done) => {
-      const urlPathAndId = getElasticSearchUrl(argv.environment, "content").concat(article.elasticSearchContentId);
-      
-      //debug("ElasticSearch content full url %s", urlPathAndId);
-      
-      requestRetry.requestUntilTrue(
+      const urlPathAndId = getElasticSearchUrl(argv.environment, "content")
+        .concat(article.elasticSearchContentId);
+      requestUntilTrue(
         urlPathAndId, 
-        function(resultMessage, conditionFulfilled) {
-      
-          debug("%s", resultMessage);
-      
+        function(conditionFulfilled) {
           if (conditionFulfilled) done();
           else done(new Error("Failed to retrieve article with correct indexed time from ElasticSearch content-published"));
         }, 
         function(res) {
           const epiRawJson = res.body;
-          const indexedTime = moment.tz(epiRawJson._source.indexTime, "Europe/Stockholm");
-
-          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime.format())
-          
-          return epiRawJson._id == article.elasticSearchContentId && smokeTestStartTime.isBefore(indexedTime);
+          const indexedTime = parse(epiRawJson._source.indexTime);
+          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime)
+          return epiRawJson._id == article.elasticSearchContentId && (isAfter(indexedTime, smokeTestStartTime) || isSameSecond(smokeTestStartTime, indexedTime));
         }
       );
     });
 
-    //return
-
     When("fetching article with identifier '"+article.identifier+"' from Alma api, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
-    
-      const urlPathAndId = environment.alma.url + environment.alma.path + article.identifier;
-      
-      debug("ElasticSearch content full url %s", urlPathAndId);
-      
-      requestRetry.requestUntilTrue(
+      const urlPathAndId = environment.alma.url
+        .concat(environment.alma.path)
+        .concat(article.identifier);    
+      requestUntilTrue(
         urlPathAndId, 
-        function(resultMessage, conditionFulfilled) {
-      
-          debug("%s", resultMessage);
-      
+        function(conditionFulfilled) {  
           if (conditionFulfilled) done();
           else done(new Error("Failed to retrieve article with correct last-modified time from Alma api"));
         }, 
         function(res) {
           const epiRawJson = res.body;
-          const lastModified = moment(res.header['last-modified']);
+          const lastModified = parse(res.header['last-modified']);
 
-          debug("Smoke test start time: ", smokeTestStartTime.format());
-          debug("Alma %s last-modified: ", urlPathAndId, lastModified.format());
-          debug("smokeTestStartTime.isSameOrBefore(lastModified)", smokeTestStartTime.isSameOrBefore(lastModified));
+          debug("Smoke test start time: %s", smokeTestStartTime);
+          debug("Alma last-modified: %s", lastModified);
           
-          return epiRawJson.article.id == article.elasticSearchContentId && smokeTestStartTime.isSameOrBefore(lastModified);
+          return epiRawJson.article.id == article.elasticSearchContentId && (isAfter(lastModified, smokeTestStartTime) || isSameSecond(smokeTestStartTime, lastModified));
         }
       );  
     });
     
+    When("fetching article with identifier '"+article.identifier+"' from DN web, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
+      const urlPathAndId = environment.dise.url
+        .concat(environment.dise.path)
+        .concat(article.identifier);    
+      requestUntilTrue(
+        urlPathAndId, 
+        function(conditionFulfilled) {  
+          if (conditionFulfilled) done();
+          else done(new Error("Failed to retrieve article with correct last-modified time from Dagens Nyheter web"));
+        }, 
+        function(res) {
+
+          const html = res.text;
+          debug("res.text: %s", res.text);
+          return true;
+        }
+      );  
+    });
+
   });
 });
 

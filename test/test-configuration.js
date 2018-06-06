@@ -24,7 +24,7 @@ const environments = {
             url: "http://alma.lab.internal.bonnier.news",
             path: "/content/nyheter/sverige"
         },
-        dn: {
+        dise: {
             url: "http://lab.dn.se",
             path: "/nyheter/sverige"
         }
