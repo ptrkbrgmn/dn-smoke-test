@@ -22,7 +22,11 @@ const environments = {
         }, 
         alma: {
             url: "http://alma.lab.internal.bonnier.news",
-            path: "/content/mat-dryck/recept/stureplan/"
+            path: "/content/nyheter/sverige"
+        },
+        dn: {
+            url: "http://lab.dn.se",
+            path: "/nyheter/sverige"
         }
 },
     latest: {
@@ -78,11 +82,14 @@ const environments = {
     }
 };
 
+const episeServerId = "1395461";
+
 const article = {
-    epiServerId: "421368",
-    flowEpi30Id: "epi.421368",
-    elasticSearchRawId: "epi.421368",
-    elasticSearchContentId: "dn.epi.421368"
+    epiServerId: episeServerId,
+    flowEpi30Id: "epi.".concat(episeServerId),
+    elasticSearchRawId: "epi.".concat(episeServerId),
+    elasticSearchContentId: "dn.epi.".concat(episeServerId),
+    identifier: "/varning-for-sno-och-halka-i-hela-landet/" //TODO: What is the correct name?
 }
 
 function getElasticSearchUrl(environment, index) {

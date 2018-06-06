@@ -41,17 +41,25 @@ debug("Starting smoke tests in '%s' environment at %s", argv.environment, smokeT
 // console.log("");
 // console.log(getElasticSearchUrl(argv.environment, "content"));
 // console.log("");
+// console.log("Alma:")
+// console.log(environment.alma.url)
+// console.log(environment.alma.path)
+// console.log(article.identifier)
 
 Feature("Index article published on Episerver", () => {
 
   Scenario("Index single article published to Episerver and verify that it is recompounded and available on all DN api:s", () => {
 
+    //TODO: Implement retry?
     Given("there is an article with id '"+article.epiServerId+"' published on Episerver", (done) => {
       request(environment.epiServer.url)
         .get(environment.epiServer.path + article.epiServerId)
         .expect(200)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            console.error(err);
+            return done(err);
+          }  
           const pathToJsonFile = "test/features/resources/"
             .concat(argv.environment)
             .concat("/epi.")
@@ -71,19 +79,26 @@ Feature("Index article published on Episerver", () => {
         .send("rawId=".concat(article.flowEpi30Id))
         .expect(303)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            console.error(err);
+            return done(err);
+          }  
           done();
         });
     });
 
-    //return;
+    // return;
 
     Then("fetching article with id '"+article.elasticSearchRawId+"' from ElasticSearch flow-raw index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "raw").concat(article.elasticSearchRawId);
+
       //debug("ElasticSearch raw full url %s", urlPathAndId);
+
       requestRetry.requestUntilTrue(urlPathAndId, 
         function(aMessage, conditionFulfilled) {
+
           debug("%s", aMessage);
+          
           if (conditionFulfilled) done();
           else done(new Error("Failed to retrieve article with correct indexed time from ElasticSearch raw at: "
             .concat(urlPathAndId)));
@@ -94,21 +109,24 @@ Feature("Index article published on Episerver", () => {
           
           debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime.format())
           
-          return epiRawJson._id == "epi.421368" && smokeTestStartTime.isBefore(indexedTime);
+          return epiRawJson._id == article.elasticSearchRawId && smokeTestStartTime.isBefore(indexedTime);
         }
       );
     });
 
     //return;
 
-    Then("when fetching article with id '421368' from ElasticSearch content-published index, indexed time in respone should be greater than start smoke test time", (done) => {
+    Then("when fetching article with id '"+article.elasticSearchContentId+"' from ElasticSearch content-published index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "content").concat(article.elasticSearchContentId);
-      debug("ElasticSearch content full url %s", urlPathAndId);
-      done();
-      return;
-      requestRetry.requestUntilTrue(urlPathAndId, 
+      
+      //debug("ElasticSearch content full url %s", urlPathAndId);
+      
+      requestRetry.requestUntilTrue(
+        urlPathAndId, 
         function(resultMessage, conditionFulfilled) {
+      
           debug("%s", resultMessage);
+      
           if (conditionFulfilled) done();
           else done(new Error("Failed to retrieve article with correct indexed time from ElasticSearch content-published"));
         }, 
@@ -116,12 +134,43 @@ Feature("Index article published on Episerver", () => {
           const epiRawJson = res.body;
           const indexedTime = moment.tz(epiRawJson._source.indexTime, "Europe/Stockholm");
 
-          console.error("ElasticSearch content-published/content/%s index time: %s", article.elasticSearchContentId, indexedTime.format())
+          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime.format())
           
           return epiRawJson._id == article.elasticSearchContentId && smokeTestStartTime.isBefore(indexedTime);
         }
       );
     });
+
+    //return
+
+    When("fetching article with identifier '"+article.identifier+"' from Alma api, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
+    
+      const urlPathAndId = environment.alma.url + environment.alma.path + article.identifier;
+      
+      debug("ElasticSearch content full url %s", urlPathAndId);
+      
+      requestRetry.requestUntilTrue(
+        urlPathAndId, 
+        function(resultMessage, conditionFulfilled) {
+      
+          debug("%s", resultMessage);
+      
+          if (conditionFulfilled) done();
+          else done(new Error("Failed to retrieve article with correct last-modified time from Alma api"));
+        }, 
+        function(res) {
+          const epiRawJson = res.body;
+          const lastModified = moment(res.header['last-modified']);
+
+          debug("Smoke test start time: ", smokeTestStartTime.format());
+          debug("Alma %s last-modified: ", urlPathAndId, lastModified.format());
+          debug("smokeTestStartTime.isSameOrBefore(lastModified)", smokeTestStartTime.isSameOrBefore(lastModified));
+          
+          return epiRawJson.article.id == article.elasticSearchContentId && smokeTestStartTime.isSameOrBefore(lastModified);
+        }
+      );  
+    });
+    
   });
 });
 

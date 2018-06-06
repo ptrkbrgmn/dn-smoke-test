@@ -1,7 +1,7 @@
 const superagent = require('superagent');
 const sleep = require('system-sleep');
 const debug = require('debug')('dn-smoke-test');
-const NUM_RETRIES = 2;
+const NUM_RETRIES = 20;
 
 function requestUntilTrue(url, callback, shouldBeTrue) {
   _request(url, 1, callback, shouldBeTrue);
@@ -26,7 +26,7 @@ function _request(url, retriedCount, callback, shouldBeTrue) {
         if (retriedCount >= NUM_RETRIES) {
           return callback && callback("ERROR: Condition was not fullfilled after " + (retriedCount+1) + " attempts", false);
         }
-        sleep(500);
+        sleep(1000);
         return _request(url, retriedCount + 1, callback, shouldBeTrue);
       }
       callback("SUCCESS: Condition was fullfilled after " + (retriedCount) + " attempts", true);
