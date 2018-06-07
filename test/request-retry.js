@@ -1,13 +1,14 @@
-const superagent = require('superagent');
-const superdebug = require('superdebug');
+const superagent = require("superagent");
+const superdebug = require("superdebug");
 
-const sleep = require('system-sleep');
-const debug = require('debug')('dn-smoke-test');
+const sleep = require("system-sleep");
+const debug = require("debug")("dn-smoke-test");
 const NUM_RETRIES = 25;
 
 /**
  * TODO:
- * - Implement exponential backoff
+ * - Implement proper  exponential backoff
+ * - Or exchange this file for Norlas suggestion
  * 
  * callback && callback()
  * This statement says that if callback is defined and truth-y (not null, false, or 0), execute it.

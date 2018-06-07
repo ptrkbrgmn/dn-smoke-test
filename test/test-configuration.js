@@ -96,19 +96,19 @@ const environments = {
 };
 
 function getArticle(epiServerId) {
-    return article = {
+    return {
         epiServerId: epiServerId,
         flowEpi30Id: "epi.".concat(epiServerId),
         elasticSearchRawId: "epi.".concat(epiServerId),
         elasticSearchContentId: "dn.epi.".concat(epiServerId)
-    }
+    };
 }
 
 function getElasticSearchUrl(environment, index) {
     const elasticSearch = environments[environment].elasticSearch;
     const elasticsearchUrl = elasticSearch.url;
-    const elasticSearchIndexPath = elasticSearch.indeces[index].path
-    return elasticSearchUrlAndPath = elasticsearchUrl.concat(elasticSearchIndexPath)
+    const elasticSearchIndexPath = elasticSearch.indeces[index].path;
+    return elasticsearchUrl.concat(elasticSearchIndexPath);
 }
 
 module.exports.environments = environments;

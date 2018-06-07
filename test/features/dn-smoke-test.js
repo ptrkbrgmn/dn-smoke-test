@@ -6,14 +6,13 @@ const isAfter = require("date-fns/is_after");
 
 const request = require("supertest");
 const jsonFile = require("jsonfile");
-const deepEqual = require('deep-equal')
+const deepEqual = require("deep-equal");
 
-const argv = require("../check-command-line-args")
+const argv = require("../check-command-line-args");
 const conf = require("../test-configuration");
 const requestUntilTrue = require("../request-retry").requestUntilTrue;
 const debug = require("debug")("dn-smoke-test");
 
-const name = "dn-smoke-test";
 const smokeTestStartTime = parse(new Date());
 const environment = conf.environments[argv.environment];
 const article = conf.getArticle(environment.articleEpiServerId);
@@ -40,7 +39,7 @@ Feature("Index article published on Episerver", () => {
             .concat(argv.environment)
             .concat("/epi.")
             .concat(environment.articleEpiServerId)
-            .concat(".json")
+            .concat(".json");
           const expectedResponse = jsonFile.readFileSync(pathToJsonFile);
           return deepEqual(res.body, expectedResponse);
         }
@@ -77,14 +76,12 @@ Feature("Index article published on Episerver", () => {
         function(res) {
           const epiRawJson = res.body;
           const indexedTime = parse(epiRawJson._source._meta._indexed);
-          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime)
+          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime);
           return epiRawJson._id == article.elasticSearchRawId && (isAfter(indexedTime, smokeTestStartTime) || isSameSecond(smokeTestStartTime, indexedTime));
           
         }
       );
     });
-
-    //return;
 
     Then("when fetching article with id '"+article.elasticSearchContentId+"' from ElasticSearch content-published index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "content")
@@ -98,18 +95,16 @@ Feature("Index article published on Episerver", () => {
         function(res) {
           const epiRawJson = res.body;
           const indexedTime = parse(epiRawJson._source.indexTime);
-          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime)
+          debug("ElasticSearch %s index time: ", urlPathAndId, indexedTime);
           return epiRawJson._id == article.elasticSearchContentId && (isAfter(indexedTime, smokeTestStartTime) || isSameSecond(smokeTestStartTime, indexedTime));
         }
       );
     });
 
-    //return;
-
-    When("fetching article with identifier '"+environment.articleSlug+"' from Alma api, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
+    Then("fetching article with identifier '"+environment.articleSlug+"' from Alma api, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = environment.alma.url
         .concat(environment.alma.path)
-        .concat(environment.articleSlug)
+        .concat(environment.articleSlug);
                 environment.articleSlug;    
       requestUntilTrue(
         urlPathAndId, 
@@ -119,7 +114,7 @@ Feature("Index article published on Episerver", () => {
         }, 
         function(res) {
           const epiRawJson = res.body;
-          const lastModified = parse(res.header['last-modified']);
+          const lastModified = parse(res.header["last-modified"]);
 
           debug("Smoke test start time: %s", smokeTestStartTime);
           debug("Alma last-modified: %s", lastModified);
@@ -128,10 +123,8 @@ Feature("Index article published on Episerver", () => {
         }
       );  
     });
-
-    //return;
     
-    When("fetching article with identifier '"+environment.articleSlug+"' from DN web, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
+    Then("fetching article with identifier '"+environment.articleSlug+"' from DN web, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = environment.dise.url
         .concat(environment.dise.path)
         .concat(environment.articleSlug);    

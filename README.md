@@ -1,6 +1,4 @@
 TODO;
-- Implement for prod environment
-- Run ESLint and check for improvements
 - Let Bang nodejs coders take a look
 - No last-modified in response from dise?
 
@@ -15,33 +13,48 @@ A series of HTTP requests that:
 
 Tests can be run in environments lab, latest and production.
 
-To execute tests, from command line run:
+To execute tests, run:
 ```sh
 $ npm test -- --environment={lab | latest | production}
-```
+```  
 
-To execute tests in debug mode fp, from command line run:
+To execute tests in debug mode for namespace dn-smoke-test, run:
 ```sh
-$ DEBUG=dn-smoke-test npm test -- --environment=={lab | latest | production}
-```
-
-To execute tests in debug mode for dn-smoke-test namespace, from command line run:
-```sh
-$ DEBUG=dn-smoke-test npm test -- --environment=={lab | latest | production}
-```
-This will run debug statements declared in in dn-smoke-test
-
+$ DEBUG=dn-smoke-test npm test -- --environment={lab | latest | production}
+```  
+This will cause all debug statements declared in dn-smoke-test code to be executed.  
 
 To execute tests in debug mode for supercurl namespace, from command line run:
 ```sh
 $ DEBUG=super-curl npm test -- --environment={lab | latest | production}
 ```
-This will give curl output of all HTTP requests. For more information see:  
-https://github.com/andineck/superdebug
+This will cause all debug statements declared in superdebug code to be executed.
+i.e give curl output of all HTTP requests.   
+For more information see: https://github.com/andineck/superdebug
 
 ---
 
 ## Miscellaneous
+
+### Docker
+Build image
+```sh
+$ docker build -t nav-docker.repo.dex.nu/dn-smoke-test .
+```  
+Run docker container in lab (default)
+```sh
+$ docker run -t nav-docker.repo.dex.nu/dn-smoke-test
+```
+
+Run docker container in latest or prod
+```sh
+$ docker run -t nav-docker.repo.dex.nu/dn-smoke-test -- --environment={latest | prod}
+```
+
+Run docker container in debug mode for namespaces dn-smoke-test and super-curl
+```sh
+$ docker run -t -e DEBUG=dn-smoke-test,super-curl nav-docker.repo.dex.nu/dn-smoke-test
+```
 
 ### depcheck  
 Check for delcared but unused dependencies  
