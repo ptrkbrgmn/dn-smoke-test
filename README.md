@@ -1,7 +1,8 @@
 TODO;
-- Implemente for prod environment
+- Implement for prod environment
 - Run ESLint and check for improvements
 - Let Bang nodejs coders take a look
+- No last-modified in response from dise?
 
 # DN Smoke test
 A series of HTTP requests that:  
@@ -10,7 +11,7 @@ A series of HTTP requests that:
 -  Fetches the article from ElasticSearch raw index and makes sure index time is after test start time
 -  Fetches the article from ElasticSearch content index and makes sure index time is after test start time
 -  Fetches the article from Alma API and makes sure index last-modified is after test start time
--  Fetches the article from Dagens Nyheter webpage and makes sure index time is after test start time  
+-  Fetches the article from Dagens Nyheter webpage and makes last-modified time is after test start time  
 
 Tests can be run in environments lab, latest and production.
 
