@@ -65,6 +65,16 @@ $ curl -H 'Cache-Control: no-cache' -v http://alma.lab.internal.bonnier.news/con
 
 ---
 
+### Format code in Visual Studio Code (mac)
+```sh
+Shift + Option + F
+```
+
+### Preview Markdown (mac)
+```sh
+Shift + Cmd + V
+```
+
 ####
 Temp text storage
 

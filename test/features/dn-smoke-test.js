@@ -6,7 +6,7 @@ const isAfter = require("date-fns/is_after");
 
 const request = require("supertest");
 const jsonFile = require("jsonfile");
-const assert = require("assert").strict;
+const deepEqual = require('deep-equal')
 
 const argv = require("../check-command-line-args")
 const conf = require("../test-configuration");
@@ -25,28 +25,31 @@ Feature("Index article published on Episerver", () => {
 
   Scenario("Index single article published to Episerver and verify that it is recompounded and available on all DN api:s", () => {
 
-    //TODO: Implement retry?
     Given("there is an article with id '"+article.epiServerId+"' published on Episerver", (done) => {
-      request(environment.epiServer.url)
-        .get(environment.epiServer.path + environment.articleEpiServerId)
-        .expect(200)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            return done(err);
-          }  
+      const urlPathAndId = environment.epiServer.url
+        .concat(environment.epiServer.path)
+        .concat(environment.articleEpiServerId);
+      requestUntilTrue(
+        urlPathAndId, 
+        function(conditionFulfilled) {
+          if (conditionFulfilled) done();
+          else done(new Error("Failed to retrieve article with correct JSON at: ".concat(urlPathAndId)));
+        }, 
+        function(res) {
           const pathToJsonFile = "test/features/resources/"
             .concat(argv.environment)
             .concat("/epi.")
             .concat(environment.articleEpiServerId)
             .concat(".json")
           const expectedResponse = jsonFile.readFileSync(pathToJsonFile);
-          assert.deepEqual(res.body, expectedResponse);
-          done();
-        });
+          return deepEqual(res.body, expectedResponse);
+        }
+      );
     });
 
-    //TODO: Implement retry?
+    //return;
+
+    //TODO: Implement retry
     When("starting a single index recompound job on flow-epi-30 for article with id '"+article.flowEpi30Id+"'", (done) => {
       request(environment.flowEpi30.url)
         .post(environment.flowEpi30.path)
@@ -60,6 +63,8 @@ Feature("Index article published on Episerver", () => {
           done();
         });
     });
+
+    //return;
 
     Then("fetching article with id '"+article.elasticSearchRawId+"' from ElasticSearch flow-raw index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "raw").concat(article.elasticSearchRawId);
@@ -79,6 +84,8 @@ Feature("Index article published on Episerver", () => {
       );
     });
 
+    //return;
+
     Then("when fetching article with id '"+article.elasticSearchContentId+"' from ElasticSearch content-published index, indexed time in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = getElasticSearchUrl(argv.environment, "content")
         .concat(article.elasticSearchContentId);
@@ -96,6 +103,8 @@ Feature("Index article published on Episerver", () => {
         }
       );
     });
+
+    //return;
 
     When("fetching article with identifier '"+environment.articleSlug+"' from Alma api, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = environment.alma.url
@@ -119,6 +128,8 @@ Feature("Index article published on Episerver", () => {
         }
       );  
     });
+
+    //return;
     
     When("fetching article with identifier '"+environment.articleSlug+"' from DN web, Last-Modifier header in respone should be greater than start smoke test time", (done) => {
       const urlPathAndId = environment.dise.url
@@ -131,14 +142,10 @@ Feature("Index article published on Episerver", () => {
           else done(new Error("Failed to retrieve article with correct last-modified time from Dagens Nyheter web"));
         }, 
         function(res) {
-          assert(res.status == 200);
-          //const html = res.text;
-          //debug("res.text: %s", res.text);
-          return true;
+          return (res.status == 200);
         }
       );  
     });
-
   });
-});
 
+});
