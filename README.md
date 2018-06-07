@@ -75,11 +75,6 @@ $ npm-clean
 ```
 https://www.npmjs.com/package/npm-clean  
 
-### Curl for alma
-```sh
-$ curl -H 'Cache-Control: no-cache' -v http://alma.lab.internal.bonnier.news/content/nyheter/sverige/varning-for-sno-och-halka-i-hela-landet/ | grep Last-Modified
-```
-
 ---
 
 ### Format code in Visual Studio Code (mac)
@@ -91,13 +86,3 @@ Shift + Option + F
 ```sh
 Shift + Cmd + V
 ```
-
-####
-Temp text storage
-
-"test": "DEBUG=dn-smoke-test mocha test"
-
-  "scripts": {
-    "test": "mocha --timeout 10000 test"
-  },
-
