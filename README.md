@@ -16,6 +16,7 @@ A series of HTTP requests that:
 
 Tests can be run in environments lab, latest and production.
 
+### Run tests
 To execute tests, run:
 ```sh
 $ npm test -- --environment={lab | latest | production}
@@ -37,8 +38,6 @@ For more information see: https://github.com/andineck/superdebug
 
 ---
 
-## Miscellaneous
-
 ### Docker
 Build image
 ```sh
@@ -58,6 +57,8 @@ Run docker container in debug mode for namespaces dn-smoke-test and super-curl
 ```sh
 $ docker run -t -e DEBUG=dn-smoke-test,super-curl nav-docker.repo.dex.nu/dn-smoke-test
 ```
+
+## Miscellaneous
 
 ### depcheck  
 Check for delcared but unused dependencies  
