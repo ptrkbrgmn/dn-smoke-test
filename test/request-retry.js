@@ -6,6 +6,9 @@ const debug = require('debug')('dn-smoke-test');
 const NUM_RETRIES = 25;
 
 /**
+ * TODO:
+ * - Implement exponential backoff
+ * 
  * callback && callback()
  * This statement says that if callback is defined and truth-y (not null, false, or 0), execute it.
  * Equal to:
@@ -41,7 +44,8 @@ function _request(url, requestCount, callback, shouldBeTrue) {
           console.error("Condition was not fullfilled after " + (requestCount+1) + " requests to %s", false, url)
           return callback && callback(false);
         }
-        sleep(3000);
+
+        sleep(500*requestCount);
         return _request(url, requestCount + 1, callback, shouldBeTrue);
       }
       debug("Condition was fullfilled after " + (requestCount) + " requests to ", true, url);

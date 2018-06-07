@@ -1,3 +1,8 @@
+TODO;
+- Implemente for prod environment
+- Run ESLint and check for improvements
+- Let Bang nodejs coders take a look
+
 # DN Smoke test
 A series of HTTP requests that:  
 - Checks that a specific article is available on Episerver

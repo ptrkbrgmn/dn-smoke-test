@@ -1,6 +1,8 @@
 
 const environments = {
     lab: {
+        articleEpiServerId: "1395461",
+        articleSlug: "/varning-for-sno-och-halka-i-hela-landet/", //TODO: What is the correct name?
         epiServer: {
             url: "http://cms-test.dn.se",
             path: "/api/contentnavservice/getpage/published/"
@@ -30,6 +32,8 @@ const environments = {
         }
 },
     latest: {
+        articleEpiServerId: "1886007",
+        articleSlug: "/varning-for-sno-och-halka-i-hela-landet/", //TODO: What is the correct name?
         epiServer: {
             url: "http://cms-stage.dn.se",
             path: "/api/contentnavservice/getpage/published/"
@@ -55,7 +59,11 @@ const environments = {
         },    
         alma: {
             url: "http://alma.latest.internal.bonnier.news",
-            path: "/content/mat-dryck/recept/stureplan/"
+            path: "/content/nyheter/sverige"
+        },
+        dise: {
+            url: "http://latest.dn.se",
+            path: "/nyheter/sverige"
         }    
     },
     prod: {
@@ -82,14 +90,13 @@ const environments = {
     }
 };
 
-const episeServerId = "1395461";
-
-const article = {
-    epiServerId: episeServerId,
-    flowEpi30Id: "epi.".concat(episeServerId),
-    elasticSearchRawId: "epi.".concat(episeServerId),
-    elasticSearchContentId: "dn.epi.".concat(episeServerId),
-    identifier: "/varning-for-sno-och-halka-i-hela-landet/" //TODO: What is the correct name?
+function getArticle(epiServerId) {
+    return article = {
+        epiServerId: epiServerId,
+        flowEpi30Id: "epi.".concat(epiServerId),
+        elasticSearchRawId: "epi.".concat(epiServerId),
+        elasticSearchContentId: "dn.epi.".concat(epiServerId)
+    }
 }
 
 function getElasticSearchUrl(environment, index) {
@@ -100,5 +107,5 @@ function getElasticSearchUrl(environment, index) {
 }
 
 module.exports.environments = environments;
-module.exports.article = article;
+module.exports.getArticle = getArticle;
 module.exports.getElasticSearchUrl = getElasticSearchUrl;
