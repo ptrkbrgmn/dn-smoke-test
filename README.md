@@ -17,6 +17,11 @@ A series of HTTP requests that:
 Tests can be run in environments lab, latest and production.
 
 ### Run tests
+Clone repo and run
+```sh
+$ npm install
+```  
+
 To execute tests, run:
 ```sh
 $ npm test -- --environment={lab | latest | production}
