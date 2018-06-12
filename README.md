@@ -1,14 +1,13 @@
 TODO;
 - Let Bang nodejs coders take a look
 - No last-modified in response from dise?
-- Parse and check naId from dise
+- Parse and check navId from dise
 - Add test for www.dn.se (Akamai)
-- Replace retry with Norlas suggestion
 
 # DN Smoke test
 A series of HTTP requests that:  
 - Checks that a specific article is available on Episerver
-- Starts a single article index job (compound) on flow-epi-30
+- Starts a single article index job (compound) on flow-epi-30 for the same article
 -  Fetches the article from ElasticSearch raw index and makes sure index time is after test start time
 -  Fetches the article from ElasticSearch content index and makes sure index time is after test start time
 -  Fetches the article from Alma API and makes sure index last-modified is after test start time
@@ -26,12 +25,6 @@ To execute tests, run:
 ```sh
 $ npm test -- --environment={lab | latest | production}
 ```  
-
-To execute tests in debug mode for namespace dn-smoke-test, run:
-```sh
-$ DEBUG=dn-smoke-test npm test -- --environment={lab | latest | production}
-```  
-This will cause all debug statements declared in dn-smoke-test code to be executed.  
 
 To execute tests in debug mode for supercurl namespace, from command line run:
 ```sh
@@ -58,9 +51,9 @@ Run tests in docker container against latest or prod
 $ docker run -t nav-docker.repo.dex.nu/dn-smoke-test -- --environment={latest | prod}
 ```
 
-Run docker container in debug mode for namespaces dn-smoke-test and super-curl
+Run docker container in debug mode for namespace super-curl
 ```sh
-$ docker run -t -e DEBUG=dn-smoke-test,super-curl nav-docker.repo.dex.nu/dn-smoke-test
+$ docker run -t -e DEBUG=super-curl nav-docker.repo.dex.nu/dn-smoke-test
 ```
 
 ## Miscellaneous
